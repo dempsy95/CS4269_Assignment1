@@ -26,10 +26,10 @@ def HRData():
 		if abs(label-1)> abs(label+1): 
 			instance['label']="Yes"
 		else: 
-			instance['lable']="No"
+			instance['label']="No"
 
-	return attributes,instances
+	return instances,attributes
 
 
 attributes,instances=HRData()
-print(attributes)
+#print(instances)

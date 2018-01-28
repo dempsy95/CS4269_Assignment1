@@ -2,6 +2,7 @@ import re
 import sys
 import math
 from random import *
+from HRData import HRData
 
 training_error = []
 test_error = []
@@ -207,6 +208,8 @@ def id3(examples, attributes):
 def main(argv):
 	global origin_examples
 	global tests
+	#play tennis example
+
 	data, attributes = import_data()
 	examples, tests = split(data)
 	origin_examples = list(examples)
@@ -214,8 +217,25 @@ def main(argv):
 	generate_error_rate()
 
 	# output error rate
-	print '[%s]' % ', '.join(map(str, training_error))
-	print '[%s]' % ', '.join(map(str, test_error))
+	print ('[%s]' % ', '.join(map(str, training_error)))
+	print ('[%s]' % ', '.join(map(str, test_error)))
+
+	#HR data people leaving the company in three years
+	data, attributes = HRData()
+	examples, tests = split(data)
+	origin_examples = list(examples)
+	id3(examples, attributes)
+	generate_error_rate()
+
+	# output error rate
+	print ('[%s]' % ', '.join(map(str, training_error)))
+	print ('[%s]' % ', '.join(map(str, test_error)))
+	
+
+
+
+
+
 
 if __name__ == "__main__":
     main(sys.argv)
