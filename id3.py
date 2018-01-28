@@ -3,11 +3,13 @@ import sys
 import math
 from random import *
 from HRData import HRData
+from matplotlib import pyplot as plt
 
 training_error = []
 test_error = []
 origin_examples = []
 tests = []
+
 root = None
 
 class Tree(object):
@@ -127,7 +129,6 @@ def generate_error_rate():
 	training_error.append(float(train_error_count) / len(origin_examples))
 	test_error.append(float(test_error_count) / len(tests))
 
-	return 0
 
 """
 main working function
@@ -148,6 +149,7 @@ def id3(examples, attributes):
 	# if examples only are all have the same label, assign the label to the tree node
 	if len(set_of_label) == 1:
 		current_node.attribute = set_of_label.pop()
+		##??why do you return the current_node lol 
 		return current_node
 
 	max_num = 0
@@ -176,7 +178,7 @@ def id3(examples, attributes):
 		else:
 			branch[example[best_attribute_name]].append(example)
 
-	# generate error rates
+	
 	for value_of_attribute in attributes[best_attribute_name]:
 		if value_of_attribute in branch:
 			max_branch_label = None
@@ -193,6 +195,8 @@ def id3(examples, attributes):
 			child.attribute = max_label
 
 		current_node.children[value_of_attribute] = child
+	
+	# generate error rates
 	generate_error_rate()
 	
 	#iteratively generate more nodes
@@ -205,9 +209,23 @@ def id3(examples, attributes):
 
 	return current_node
 
+def plot(error1, error2):
+	line1,=plt.plot(error1,"b-",label='training error')
+	line2,=plt.plot(error2,"r-", label='testing error')
+	plt.xlabel("# of iterations")
+	plt.xlabel("error rate")
+	first_legend = plt.legend(handles=[line1], loc=1)
+	ax = plt.gca().add_artist(first_legend)
+	plt.legend(handles=[line2], loc=4)
+	
+	plt.show()
+
 def main(argv):
 	global origin_examples
 	global tests
+	global root
+	global training_error
+	global test_error
 	#play tennis example
 
 	data, attributes = import_data()
@@ -220,6 +238,15 @@ def main(argv):
 	print ('[%s]' % ', '.join(map(str, training_error)))
 	print ('[%s]' % ', '.join(map(str, test_error)))
 
+	#plotting error rate
+	plot(training_error, test_error)
+	
+	#changing certain global variables
+	root=None
+	training_error=[]
+	test_error=[]
+
+
 	#HR data people leaving the company in three years
 	data, attributes = HRData()
 	examples, tests = split(data)
@@ -230,6 +257,9 @@ def main(argv):
 	# output error rate
 	print ('[%s]' % ', '.join(map(str, training_error)))
 	print ('[%s]' % ', '.join(map(str, test_error)))
+
+	#plotting error rate
+	plot(training_error, test_error)
 	
 
 
