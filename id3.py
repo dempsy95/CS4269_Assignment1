@@ -49,10 +49,10 @@ def import_data():
 """
 Split data into training set and test set
 """
-def split(data):
+def split(data,ratio):
 	example = list(data)
 	test = []
-	number_of_test = math.trunc(len(data) * 0.2)
+	number_of_test = math.trunc(len(data) * ratio)
 	for i in range(number_of_test):
 		random_number = randint(0, len(example) - 1)
 		test.append(example[random_number])
@@ -298,23 +298,12 @@ def reduced_error_pruning(training):
 		
 		train_error,  test_error, val_error=calculateErrorRate(training,tests, validation)
 
-		'''
-		print("new validation error")
-		print(val_error)
-		print("new test error")
-		print(test_error)
-		print("old validation error")
-		print(cur_error_rate)
-
-		'''
-
-		
 		generate_error_rate()
 
-		#calls itself after removing a node
+		#calls itself after removing a node to remove the next node
 		reduced_error_pruning(training)
 	else: 
-		#if removing any node in the tree would not reduce the validation error, then stop the alogorithm
+		#if removing any node in the tree would not reduce the validation error, then alogorithm stops
 		return
 
 
@@ -435,35 +424,52 @@ def part3():
 	validation_errror=[]
 
 	data, attributes = HRData()
-	examples, tests = split(data)
+	examples, tests = split(data, 0.2)
+
+
+	subset=[[], [], []]
+	#spliting the training set intro three subsets
+	subset12, subset[0] = split(examples, 1/3)
+	subset[1], subset[2]=split(subset12, 1/2)
+
+
+
+	#Repeat #3 using different selections of training and validation subsets.  Do 
+	for i in range(3):
+		validation=subset[i]
+		training=[]
+		#use the remaining two subsets as the training set
+		for j in range(3):
+			if(j!=i):
+				training.extend(subset[j])
+
+		print(len(validation))
+		print(len(training))
+
+		origin_examples = list(training)
+
+		id3(training, attributes)
+
+		generate_error_rate()
 	
-	#spliting the training set intro training and validation sets
-	training, validation = split(examples)
+		print("old stats")
 
-	origin_examples = list(training)
+		print ('[%s]' % ', '.join(map(str, training_error)))
+		print ('[%s]' % ', '.join(map(str, test_error)))
+		print ('[%s]' % ', '.join(map(str, validation_error)))
 
-	id3(training, attributes)
-
-	generate_error_rate()
+		plot(training_error, test_error, validation_error)
 	
-	print("old stats")
+		#performs reduced error pruning
+		reduced_error_pruning(training)
 
-	print ('[%s]' % ', '.join(map(str, training_error)))
-	print ('[%s]' % ', '.join(map(str, test_error)))
-	print ('[%s]' % ', '.join(map(str, validation_error)))
+		print("new stats")
 
-	plot(training_error, test_error, validation_error)
-	
-	#performs reduced error pruning
-	reduced_error_pruning(training)
+		print ('[%s]' % ', '.join(map(str, training_error)))
+		print ('[%s]' % ', '.join(map(str, test_error)))
+		print ('[%s]' % ', '.join(map(str, validation_error)))
 
-	print("new stats")
-
-	print ('[%s]' % ', '.join(map(str, training_error)))
-	print ('[%s]' % ', '.join(map(str, test_error)))
-	print ('[%s]' % ', '.join(map(str, validation_error)))
-
-	plot(training_error, test_error, validation_error)
+		plot(training_error, test_error, validation_error)
 
 
 
@@ -477,7 +483,7 @@ def part1():
 
 	#play tennis example
 	data, attributes = import_data()
-	examples, tests = split(data)
+	examples, tests = split(data,0.2)
 	origin_examples = list(examples)
 	id3(examples, attributes)
 	generate_error_rate()
@@ -506,7 +512,7 @@ def part2():
 
 	#HR data with labels indicating whether people are leaving the company in three years
 	data, attributes = HRData()
-	examples, tests = split(data)
+	examples, tests = split(data, 0.2)
 	origin_examples = list(examples)
 	id3(examples, attributes)
 	
