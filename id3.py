@@ -224,39 +224,49 @@ def plot(error1, error2):
 	
 	plt.show()
 
+
 node_to_remove=None
 best_error_rate=1
 node_to_remove_label=None
 
+
+'''
+This function implements the reduced error pruning algorithm
+
+'''
 def reduced_error_pruning(training, validation, test):
 	global root
 	global best_error_rate
 	global node_to_remove
 	global node_to_remove_label
 
-
-	
+	#initializing the values
 	best_error_rate=1
 	node_to_remove=None
 	node_to_remove_label=None 
-	#why does this line matter lol
 
 	
 	cur_node=root
+
+	#calculates the current error rate on the validation set
 	_,cur_error_rate =calculateErrorRate(training, validation)
 	
+	#traverse through the tree to find the find the node whose removal would 
+	#decrease the validation error the most
 	traverse_tree(cur_node,training, validation)
 
 
 	if best_error_rate <= cur_error_rate: 
-		print("I am removing the node!!!!!!!!!!!!!!!!!!!")
-		print(node_to_remove.attribute)
+		#if removing a certain node would reduce the validation error
 
-
+		#remove the node
 		node_to_remove.children={}
 		node_to_remove.is_leaf=True
 		node_to_remove.attribute=node_to_remove_label
+
+
 		val_error, test_error=calculateErrorRate(validation,test)
+
 		print("My validation error")
 		print(val_error)
 		print("my test error")
@@ -264,25 +274,31 @@ def reduced_error_pruning(training, validation, test):
 		print("my old validation error")
 		print(cur_error_rate)
 
-
+		#calls itself after removing a node
 		reduced_error_pruning(training, validation, test)
 	else: 
+		#if removing any node in the tree would not reduce the validation error, then stop the alogorithm
 		return
 
 
 
+'''
+This function traverses through the tree once and computes which node's removal 
+would most increases the decision tree accuracy over the validation set
+
+'''
 def traverse_tree(cur_node, training, validation):
 
 	global best_error_rate
 	global node_to_remove
 	global node_to_remove_label
 	
+	#only interested in non-leaf nodes
 	if cur_node.is_leaf: 
 		return
 	
+	#obtain the validation error if a certain node is removed
 	cur_rate, max_label=removal_gain(cur_node, training, validation)
-	print(cur_node.attribute)
-	print(cur_rate)
 
 
 	if cur_rate < best_error_rate:
@@ -291,11 +307,16 @@ def traverse_tree(cur_node, training, validation):
 		node_to_remove=cur_node
 		node_to_remove_label=max_label
 
-
+	#continue traversing through the tree
 	for children in cur_node.children: 
 		traverse_tree(cur_node.children[children], training, validation)
 
 
+'''
+This function returns the label of the training examples affiliated with that node
+it returns None if the training example is not affiliated with the node
+
+'''
 def result_from_pruned_decision_tree(node, instance, node_to_remove):
 	if node.attribute==node_to_remove.attribute:
 		return instance["label"]
@@ -307,27 +328,29 @@ def result_from_pruned_decision_tree(node, instance, node_to_remove):
 
 
 
+'''
+This function returns the error rate over the validation set if a certain node is removed
+
+'''
 def removal_gain(cur_node, training, validation):
 
-	#changing the tree
+	#removing a certain node from the tree
 	children=cur_node.children
 	cur_node.children={}
 	cur_node.is_leaf=True
 	attribute=cur_node.attribute
 
-	
 
 	set_of_label = set()
 	list_of_label = []
 
-	#using validation test to evaluate whether if it was worth removing a node
-	for example in validation: 
+	#getting the label of the training examples affiliated with the node
+	for example in training: 
 		label=result_from_pruned_decision_tree(root,example, cur_node)
 		if label!=None:
 			set_of_label.add(label)
 			list_of_label.append(label)
 
-	#hold on you only need to count the labels right???? ugh...
 
 	#counting the labels
 	max_num = 0
@@ -340,13 +363,14 @@ def removal_gain(cur_node, training, validation):
 
 	
 	
-	##changing the attribute to just be the max_label
+	# assigning it the most common classification of the training examples 
+	#affiliated with that node. 
 	cur_node.attribute=max_label
 
-
+     #calculates the new error rate on the validation rate
 	_,error_rate=calculateErrorRate(training, validation)
 
-	#changing the label back
+	#adding the node back into the tree
 	cur_node.children=children
 	cur_node.is_leaf=False
 	cur_node.attribute=attribute
