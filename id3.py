@@ -120,6 +120,7 @@ def generate_error_rate():
 	training_error.append(trainError)
 	test_error.append(testError)
 
+
 def calculateErrorRate(origin_examples, tests):
 	train_error_count = 0
 	for exm in origin_examples:
@@ -378,16 +379,13 @@ def removal_gain(cur_node, training, validation):
 	return error_rate, max_label
 
 
-def main(argv):
+def part3():
 	global origin_examples
 	global tests
 	global root
 	global training_error
 	global test_error
-
-
-
-	#implement reduce_error pruning
+	
 	root=None
 	training_error=[]
 	test_error=[]
@@ -395,7 +393,6 @@ def main(argv):
 	data, attributes = HRData()
 	examples, tests = split(data)
 	
-	#write a validation split method....later....
 	training, validation = split(examples)
 
 	origin_examples = list(training)
@@ -406,8 +403,14 @@ def main(argv):
 	print(error)
 	
 	reduced_error_pruning(training,validation, tests)
-	
-	'''
+
+def part1():
+	global origin_examples
+	global tests
+	global root
+	global training_error
+	global test_error
+
 	#play tennis example
 	data, attributes = import_data()
 	examples, tests = split(data)
@@ -422,6 +425,14 @@ def main(argv):
 	#plotting error rate
 	plot(training_error, test_error)
 	
+	
+
+def part2():
+	global origin_examples
+	global tests
+	global root
+	global training_error
+	global test_error
 	#changing certain global variables
 	root=None
 	training_error=[]
@@ -443,7 +454,11 @@ def main(argv):
 	#plotting error rate
 	plot(training_error, test_error)
 
-	'''
+
+def main(argv):
+	part1()
+	part2()
+	part3()
 
 
 
