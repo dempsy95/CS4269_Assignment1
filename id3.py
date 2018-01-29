@@ -313,7 +313,6 @@ def traverse_tree(cur_node, training, validation):
 
 
 '''
-hold on it actually does not。。ugh
 This function returns the label of the training examples affiliated with that node
 it returns None if the training example is not affiliated with the node
 
