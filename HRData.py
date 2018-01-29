@@ -5,7 +5,7 @@ import random
 def HRData():
 	features=["promotion_in_5_years","work_accident", "married","worked_for_more_than_5_companies",
 	"work_in_tech", "high_satisfaction", "high_evaluation", "high_salary", "average_weekly_hours_exceed_50",
-	"work_in_sales"]
+	"work_in_sales", "work_in_finance"]
 	attributes={}
 	values={"Yes":1, "No":-1}
 	for feature in features: 
@@ -25,7 +25,9 @@ def HRData():
 		+values[instance["worked_for_more_than_5_companies"]]*0.8
 		-values[instance["promotion_in_5_years"]]*0.2\
 		+values[instance["work_in_sales"]]*0.3\
-		+(random.random()/2-1)
+		-values[instance["work_in_tech"]]*0.2\
+		+values[instance["work_in_finance"]]*0.1\
+		+(random.random()-1)
 
 	
 		if abs(label-1)> abs(label+1): 

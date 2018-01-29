@@ -526,8 +526,8 @@ def part2():
 
 
 def main(argv):
-	part1()
-	part2()
+	#part1()
+	#part2()
 	part3()
 
 
