@@ -287,7 +287,8 @@ def reduced_error_pruning(training):
 	traverse_tree(cur_node,training)
 
 
-	if best_error_rate <= cur_error_rate: 
+	if best_error_rate <= cur_error_rate:
+		print("removing node!!!") 
 		#if removing a certain node would reduce the validation error
 
 		#remove the node
@@ -417,8 +418,7 @@ def part3():
 	global validation
 	global validation_error
 	
-	#initializing certain variables
-	root=None
+	
 	training_error=[]
 	test_error=[]
 	validation_errror=[]
@@ -437,6 +437,13 @@ def part3():
 	 #using different selections of training and validation subsets.
 	
 	for i in range(3):
+		#initializing certain variables
+		root=None
+		training_error=[]
+		test_error=[]
+		validation_error=[]
+
+
 		validation=subset[i]
 		training=[]
 		#use the remaining two subsets as the training set
