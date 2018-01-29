@@ -18,11 +18,11 @@ def HRData():
 			instance[feature]=random.sample(['Yes', 'No'],  1)[0]
 		instances.append(instance)
 		
-		label=-values[instance["promotion_in_5_years"]]*0.3+values[instance["work_accident"]]*0.5\
-		-values[instance["high_salary"]]*0.45-values[instance["high_evaluation"]]*0.35\
+		label=values[instance["work_accident"]]*0.6\
+		-values[instance["high_salary"]]*0.3\
 		+values[instance["average_weekly_hours_exceed_50"]]*0.5\
 		-values[instance["high_satisfaction"]]*0.4\
-		+values[instance["worked_for_more_than_5_companies"]]*0.6
+		+values[instance["worked_for_more_than_5_companies"]]*0.7
 		if abs(label-1)> abs(label+1): 
 			instance['label']="Yes"
 		else: 
