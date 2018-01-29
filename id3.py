@@ -232,11 +232,18 @@ def id3(examples, attributes):
 	return current_node
 
 
-def plot(error1, error2):
+def plot(error1, error2, error3):
 	line1,=plt.plot(error1,"b-",label='training error')
 	line2,=plt.plot(error2,"r-", label='testing error')
+
 	plt.xlabel("# of iterations")
 	plt.ylabel("error rate")
+
+
+	if(error3!=None): 
+		line3,=plt.plot(error3, "g-", label="validation error")
+
+
 	first_legend = plt.legend(handles=[line1], loc=1)
 	ax = plt.gca().add_artist(first_legend)
 	plt.legend(handles=[line2], loc=4)
@@ -290,12 +297,15 @@ def reduced_error_pruning(training):
 		
 		train_error,  test_error, val_error=calculateErrorRate(training,tests, validation)
 
+		'''
 		print("new validation error")
 		print(val_error)
 		print("new test error")
 		print(test_error)
 		print("old validation error")
 		print(cur_error_rate)
+
+		'''
 
 		
 		generate_error_rate()
@@ -355,7 +365,8 @@ def result_from_pruned_decision_tree(node, instance, node_to_remove):
 
 
 '''
-This function returns the error rate over the validation set if a certain node is removed
+This function returns the error rate over the validation set when a certain node is removed from the
+decision tree
 
 '''
 def removal_gain(cur_node, training):
@@ -439,6 +450,8 @@ def part3():
 	print ('[%s]' % ', '.join(map(str, training_error)))
 	print ('[%s]' % ', '.join(map(str, test_error)))
 	print ('[%s]' % ', '.join(map(str, validation_error)))
+
+	plot(training_error, test_error, validation_error)
 	
 	#performs reduced error pruning
 	reduced_error_pruning(training)
@@ -448,6 +461,8 @@ def part3():
 	print ('[%s]' % ', '.join(map(str, training_error)))
 	print ('[%s]' % ', '.join(map(str, test_error)))
 	print ('[%s]' % ', '.join(map(str, validation_error)))
+
+	plot(training_error, test_error, validation_error)
 
 	
 
@@ -470,7 +485,7 @@ def part1():
 	print ('[%s]' % ', '.join(map(str, test_error)))
 
 	#plotting error rate
-	plot(training_error, test_error)
+	plot(training_error, test_error,None)
 	
 	
 
@@ -501,7 +516,7 @@ def part2():
 
 
 	#plotting error rate
-	plot(training_error, test_error)
+	plot(training_error, test_error, None)
 
 
 def main(argv):
