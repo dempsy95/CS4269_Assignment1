@@ -231,24 +231,25 @@ def id3(examples, attributes):
 
 	return current_node
 
+'''
+This function plots the error rates alongside number of iterations
+
+'''
 
 def plot(error1, error2, error3):
 	line1,=plt.plot(error1,"b-",label='training error')
 	line2,=plt.plot(error2,"r-", label='testing error')
-
-	plt.xlabel("# of iterations")
-	plt.ylabel("error rate")
-
-
-	if(error3!=None): 
+	if(error3!=None):
 		line3,=plt.plot(error3, "g-", label="validation error")
 
 
-	first_legend = plt.legend(handles=[line1], loc=1)
-	ax = plt.gca().add_artist(first_legend)
-	plt.legend(handles=[line2], loc=4)
+	plt.xlabel("# of iterations")
+	plt.ylabel("error rate")
+ 	
+	plt.legend()
 	
 	plt.show()
+
 
 
 node_to_remove=None
@@ -464,7 +465,8 @@ def part3():
 
 	plot(training_error, test_error, validation_error)
 
-	
+
+
 
 def part1():
 	global origin_examples
