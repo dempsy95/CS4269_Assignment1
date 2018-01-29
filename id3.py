@@ -267,11 +267,11 @@ def reduced_error_pruning(training, validation, test):
 
 		val_error, test_error=calculateErrorRate(validation,test)
 
-		print("My validation error")
+		print("new validation error")
 		print(val_error)
-		print("my test error")
+		print("new test error")
 		print(test_error)
-		print("my old validation error")
+		print("old validation error")
 		print(cur_error_rate)
 
 		#calls itself after removing a node
@@ -313,12 +313,13 @@ def traverse_tree(cur_node, training, validation):
 
 
 '''
+hold on it actually does not。。ugh
 This function returns the label of the training examples affiliated with that node
 it returns None if the training example is not affiliated with the node
 
 '''
 def result_from_pruned_decision_tree(node, instance, node_to_remove):
-	if node.attribute==node_to_remove.attribute:
+	if node==node_to_remove:
 		return instance["label"]
 	elif node.is_leaf == True:
 		return None
@@ -376,6 +377,7 @@ def removal_gain(cur_node, training, validation):
 	cur_node.attribute=attribute
 
 	return error_rate, max_label
+
 
 def main(argv):
 	global origin_examples
@@ -443,6 +445,8 @@ def main(argv):
 	plot(training_error, test_error)
 
 	'''
+
+
 
 
 if __name__ == "__main__":
