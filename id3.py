@@ -21,6 +21,7 @@ class Tree(object):
 		self.children = {}
 		self.attribute = None
 
+# the data for part A
 def import_data():
 	"""
 	* import data
@@ -126,8 +127,6 @@ def generate_error_rate():
 	test_error.append(testError)
 	validation_error.append(validationError)
 
-
-
 def calculateErrorRate(origin_examples, tests, validation):
 	train_error_count = 0
 	for exm in origin_examples:
@@ -150,10 +149,21 @@ def calculateErrorRate(origin_examples, tests, validation):
 	else: 
 		return float(train_error_count) / len(origin_examples), float(test_error_count) / len(tests), float(validation_error_count) / len(validation)
 
-
-
 """
-main working function
+id3 algorithm:
+	Parameter:
+		- examples: a list of instances that used for constructing decision tree 
+			 - an example is a dictionary with features and keys
+			 	* for example： {"Outlook" : "Sunny", "Temp" : "Hot", "Humidity" : "High", "Wind" : "Weak", "label" : "No"}
+		- attributes: a list of feature that can be chosen for partitioning data
+	Return value:
+		a tree node representating the root of the constructed decision tree
+
+	1. if all the examples have the same label, assign the label to the node's attribute, return
+	2. if there is no more attribute that we can sue to partition data, assign the major label tot he node's attribute, return
+	3. find the best attribute using info gain and assign it to the node's attribute
+	4. partition the examples into different groups as the value of attribute is different for each example
+	5. recursively generates the current node's decedents
 """
 def id3(examples, attributes):
 	# create a a tree node
@@ -171,9 +181,10 @@ def id3(examples, attributes):
 	# if examples only are all have the same label, assign the label to the tree node
 	if len(set_of_label) == 1:
 		current_node.attribute = set_of_label.pop()
-		##??why do you return the current_node lol 
+		# if there is only one label in the training data, we do not need to do classification anymore. 
 		return current_node
 
+	# find the major label of the examples
 	max_num = 0
 	max_label = None
 	for current_label in set_of_label:
@@ -200,7 +211,7 @@ def id3(examples, attributes):
 		else:
 			branch[example[best_attribute_name]].append(example)
 
-	
+	# generate a trial subtree and use it for generating error rates
 	for value_of_attribute in attributes[best_attribute_name]:
 		if value_of_attribute in branch:
 			max_branch_label = None
@@ -221,7 +232,7 @@ def id3(examples, attributes):
 	# generate error rates
 	generate_error_rate()
 	
-	#iteratively generate more nodes
+	# recursively generate the decedents
 	for value_of_attribute in attributes[best_attribute_name]:
 		if value_of_attribute in branch:
 			new_attributes = dict(attributes)
