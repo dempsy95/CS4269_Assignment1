@@ -395,7 +395,7 @@ def main(argv):
 	data, attributes = HRData()
 	examples, tests = split(data)
 	
-	#write a validation split method....okay???
+	#write a validation split method....later....
 	training, validation = split(examples)
 
 	origin_examples = list(training)
