@@ -288,7 +288,6 @@ def reduced_error_pruning(training):
 
 
 	if best_error_rate <= cur_error_rate:
-		print("removing node!!!") 
 		#if removing a certain node would reduce the validation error
 
 		#remove the node
@@ -527,8 +526,8 @@ def part2():
 
 
 def main(argv):
-	#part1()
-	#part2()
+	part1()
+	part2()
 	part3()
 
 

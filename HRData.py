@@ -25,7 +25,7 @@ def HRData():
 		+values[instance["worked_for_more_than_5_companies"]]*0.8
 		-values[instance["promotion_in_5_years"]]*0.2\
 		+values[instance["work_in_sales"]]*0.3\
-		+(random.random()-1)
+		+(random.random()/2-1)
 
 	
 		if abs(label-1)> abs(label+1): 
