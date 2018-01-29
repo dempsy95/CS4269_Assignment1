@@ -426,15 +426,16 @@ def part3():
 	data, attributes = HRData()
 	examples, tests = split(data, 0.2)
 
-
-	subset=[[], [], []]
 	#spliting the training set intro three subsets
+	subset=[[], [], []]
 	subset12, subset[0] = split(examples, 1/3)
 	subset[1], subset[2]=split(subset12, 1/2)
 
 
 
-	#Repeat #3 using different selections of training and validation subsets.  Do 
+	#Repeat constructing the tree and perform reduced error pruning 
+	 #using different selections of training and validation subsets.
+	
 	for i in range(3):
 		validation=subset[i]
 		training=[]
@@ -443,33 +444,24 @@ def part3():
 			if(j!=i):
 				training.extend(subset[j])
 
-		print(len(validation))
-		print(len(training))
 
 		origin_examples = list(training)
 
+		#constructing the decision tree
 		id3(training, attributes)
 
 		generate_error_rate()
 	
-		print("old stats")
-
-		print ('[%s]' % ', '.join(map(str, training_error)))
-		print ('[%s]' % ', '.join(map(str, test_error)))
-		print ('[%s]' % ', '.join(map(str, validation_error)))
-
+		#plots the error rates without reduced error pruning
 		plot(training_error, test_error, validation_error)
-	
+
+
 		#performs reduced error pruning
 		reduced_error_pruning(training)
 
-		print("new stats")
-
-		print ('[%s]' % ', '.join(map(str, training_error)))
-		print ('[%s]' % ', '.join(map(str, test_error)))
-		print ('[%s]' % ', '.join(map(str, validation_error)))
-
+		#plots the error rates with reduced error pruning
 		plot(training_error, test_error, validation_error)
+
 
 
 
