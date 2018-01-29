@@ -7,8 +7,11 @@ from matplotlib import pyplot as plt
 
 training_error = []
 test_error = []
+validation_error=[]
 origin_examples = []
+validation=[]
 tests = []
+
 
 root = None
 
@@ -116,12 +119,16 @@ def result_from_decision_tree(instance):
 def generate_error_rate():
 	global origin_examples
 	global tests
-	trainError,testError=calculateErrorRate(origin_examples, tests)
+	global validation
+
+	trainError,testError,validationError=calculateErrorRate(origin_examples, tests, validation)
 	training_error.append(trainError)
 	test_error.append(testError)
+	validation_error.append(validationError)
 
 
-def calculateErrorRate(origin_examples, tests):
+
+def calculateErrorRate(origin_examples, tests, validation):
 	train_error_count = 0
 	for exm in origin_examples:
 		if result_from_decision_tree(exm) != exm["label"]:
@@ -131,7 +138,17 @@ def calculateErrorRate(origin_examples, tests):
 	for test in tests:
 		if result_from_decision_tree(test) != test["label"]:
 			test_error_count = test_error_count + 1
-	return float(train_error_count) / len(origin_examples), float(test_error_count) / len(tests)
+
+	validation_error_count=0
+
+	for val in validation: 
+		if result_from_decision_tree(val) != val["label"]:
+			validation_error_count= validation_error_count+ 1
+	
+	if(len(validation)==0):
+		return float(train_error_count) / len(origin_examples), float(test_error_count) / len(tests), 0
+	else: 
+		return float(train_error_count) / len(origin_examples), float(test_error_count) / len(tests), float(test_error_count) / len(validation)
 
 
 
@@ -250,7 +267,7 @@ def reduced_error_pruning(training, validation, test):
 	cur_node=root
 
 	#calculates the current error rate on the validation set
-	_,cur_error_rate =calculateErrorRate(training, validation)
+	_,cur_error_rate,_ =calculateErrorRate(training, test, validation)
 	
 	#traverse through the tree to find the find the node whose removal would 
 	#decrease the validation error the most
@@ -266,7 +283,7 @@ def reduced_error_pruning(training, validation, test):
 		node_to_remove.attribute=node_to_remove_label
 
 
-		val_error, test_error=calculateErrorRate(validation,test)
+		val_error, test_error, _=calculateErrorRate(validation,test, [])
 
 		print("new validation error")
 		print(val_error)
@@ -369,7 +386,7 @@ def removal_gain(cur_node, training, validation):
 	cur_node.attribute=max_label
 
      #calculates the new error rate on the validation rate
-	_,error_rate=calculateErrorRate(training, validation)
+	_,error_rate, _=calculateErrorRate(training, validation, [])
 
 	#adding the node back into the tree
 	cur_node.children=children
@@ -385,6 +402,8 @@ def part3():
 	global root
 	global training_error
 	global test_error
+	global validation
+	global validation_error
 	
 	root=None
 	training_error=[]
@@ -399,7 +418,7 @@ def part3():
 
 	id3(training, attributes)
 	print("the old test error")
-	_,error=calculateErrorRate(training, tests)
+	_,error,_=calculateErrorRate(training, tests, validation)
 	print(error)
 	
 	reduced_error_pruning(training,validation, tests)
@@ -456,10 +475,8 @@ def part2():
 
 
 def main(argv):
-	part1()
-	part2()
+	
 	part3()
-
 
 
 
