@@ -21,7 +21,7 @@ class Tree(object):
 		self.children = {}
 		self.attribute = None
 
-# the data for part A
+# the data for part 1
 def import_data():
 	"""
 	* import data
@@ -48,7 +48,7 @@ def import_data():
 	return data, attributes
 
 """
-Split data into training set and test set
+Splits data into a training set and a test set 
 """
 def split(data,ratio):
 	example = list(data)
@@ -62,7 +62,7 @@ def split(data,ratio):
 	return example, test
 
 """
-calculate entropy of the giving set
+calculates the entropy of the giving set
 """
 def entropy(examples):
 	labels = {}
@@ -80,7 +80,7 @@ def entropy(examples):
 	return num
 
 """
-find the best attribute using info gain
+finds the best attribute using info gain
 """
 def find_best_attribute(examples, attributes):
 	best_attribute = None
@@ -106,7 +106,8 @@ def find_best_attribute(examples, attributes):
 	return best_attribute
 
 """
-dfs, result_from_decision_tree and generate_error_rate are used for generating error rate
+dfs, result_from_decision_tree and generate_error_rate are used for calculating error rates
+dfs is a helper method for result_from_decision_tree
 """
 def dfs(node, instance):
 	if node.is_leaf == True:
@@ -114,9 +115,15 @@ def dfs(node, instance):
 	else:
 		return dfs(node.children[instance[node.attribute]], instance)
 
+"""
+This method classifies the given instance using the decision tree
+"""
 def result_from_decision_tree(instance):
 	return dfs(root, instance)
 
+"""
+This method calls calculateErrorRate and stores the error rates in global variables
+"""
 def generate_error_rate():
 	global origin_examples
 	global tests
@@ -127,6 +134,10 @@ def generate_error_rate():
 	test_error.append(testError)
 	validation_error.append(validationError)
 
+
+"""
+This method calculates the error rates
+"""
 def calculateErrorRate(origin_examples, tests, validation):
 	train_error_count = 0
 	for exm in origin_examples:
@@ -167,7 +178,7 @@ id3 algorithm:
 		- recursively generates the current node's decedents
 """
 def id3(examples, attributes):
-	# create a a tree node
+	# creates a a tree node
 	current_node = Tree()
 	global root
 	if root == None:
@@ -179,7 +190,7 @@ def id3(examples, attributes):
 		set_of_label.add(example["label"])
 		list_of_label.append(example["label"])
 
-	# if examples only are all have the same label, assign the label to the tree node
+	# if the examples all have the same label, assign the label to the tree node
 	if len(set_of_label) == 1:
 		current_node.attribute = set_of_label.pop()
 		# if there is only one label in the training data, we do not need to do classification anymore. 
@@ -194,17 +205,17 @@ def id3(examples, attributes):
 			max_num = current_num
 			max_label = current_label
 
-	# if examples does not have any more attributes, assign the major label to the tree node
+	# if the examples do not have any more attributes, assign the major label to the tree node
 	if len(attributes) == 0:
 		current_node.attribute = max_label
 		return current_node
 
-	# find the best attribute to make partition
+	# finds the best attribute to make partition
 	best_attribute_name = find_best_attribute(examples, attributes)
 	current_node.attribute = best_attribute_name
 	current_node.is_leaf = False
 
-	# partition examples into different branch
+	# partition examples into different branches
 	branch = {}
 	for example in examples:
 		if example[best_attribute_name] not in branch:
@@ -212,7 +223,7 @@ def id3(examples, attributes):
 		else:
 			branch[example[best_attribute_name]].append(example)
 
-	# generate a trial subtree and use it for generating error rates
+	# generates a trial subtree and use it for generating error rates
 	for value_of_attribute in attributes[best_attribute_name]:
 		if value_of_attribute in branch:
 			max_branch_label = None
@@ -233,7 +244,7 @@ def id3(examples, attributes):
 	# generate error rates
 	generate_error_rate()
 	
-	# recursively generate the decedents
+	# recursively generate the descendants
 	for value_of_attribute in attributes[best_attribute_name]:
 		if value_of_attribute in branch:
 			new_attributes = dict(attributes)
@@ -244,7 +255,7 @@ def id3(examples, attributes):
 	return current_node
 
 '''
-This function plots the error rates alongside number of iterations
+This function plots the error rates alongside the number of iterations
 '''
 def plot(error1, error2, error3):
 	line1,=plt.plot(error1,"b-",label='training error')
@@ -274,7 +285,7 @@ def reduced_error_pruning(training):
 	global validation
 	global tests
 
-	# initializing the values
+	# initializing the global variables
 	best_error_rate=1
 	node_to_remove=None
 	node_to_remove_label=None 
@@ -284,14 +295,13 @@ def reduced_error_pruning(training):
 	# calculates the current error rate on the validation set
 	_,_,cur_error_rate=calculateErrorRate(training, tests, validation)
 	
-	# traverse through the tree to find the find the node whose removal would 
-	# decrease the validation error the most
+	# traverses through the tree once and computes which node's removal 
+	# would most increases the decision tree accuracy over the validation set
 	traverse_tree(cur_node,training)
 
 	if best_error_rate <= cur_error_rate:
 		# if removing a certain node would reduce the validation error
-
-		# remove the node
+		# then remove the node
 		node_to_remove.children={}
 		node_to_remove.is_leaf=True
 		node_to_remove.attribute=node_to_remove_label
@@ -303,7 +313,7 @@ def reduced_error_pruning(training):
 		# calls itself after removing a node to remove the next node
 		reduced_error_pruning(training)
 	else: 
-		# if removing any node in the tree would not reduce the validation error, then alogorithm stops
+		# if removing any node in the tree would not reduce the validation error, then the algorithm stops
 		return
 
 '''
@@ -320,7 +330,7 @@ def traverse_tree(cur_node, training):
 	if cur_node.is_leaf: 
 		return
 	
-	# obtain the validation error if a certain node is removed
+	# Calculates the validation error if a certain node is removed from the decision tree
 	cur_rate, max_label=removal_gain(cur_node, training)
  
 	if cur_rate < best_error_rate:
@@ -334,7 +344,7 @@ def traverse_tree(cur_node, training):
 		traverse_tree(cur_node.children[children], training)
 
 '''
-This function returns the label of the training examples affiliated with that node
+This function returns the labels of the training examples affiliated with the given node
 it returns None if the training example is not affiliated with the node
 '''
 def result_from_pruned_decision_tree(node, instance, node_to_remove):
@@ -363,7 +373,7 @@ def removal_gain(cur_node, training):
 	set_of_label = set()
 	list_of_label = []
 
-	# getting the label of the training examples affiliated with the node
+	# getting the labels of the training examples affiliated with the node
 	for example in training: 
 		label=result_from_pruned_decision_tree(root,example, cur_node)
 		if label!=None:
@@ -379,7 +389,7 @@ def removal_gain(cur_node, training):
 			max_num = current_num
 			max_label = current_label
 	
-	# assigning it the most common classification of the training examples 
+	# assigning the most common classification of the training examples 
 	# affiliated with that node. 
 	cur_node.attribute=max_label
 
@@ -393,6 +403,9 @@ def removal_gain(cur_node, training):
 
 	return error_rate, max_label
 
+"""
+implements part3 of the assignment
+"""
 def part3():
 	global origin_examples
 	global tests
@@ -409,31 +422,31 @@ def part3():
 	data, attributes = HRData()
 	examples, tests = split(data, 0.2)
 
-	# spliting the training set intro three subsets
+	# splitting the training set into three subsets
 	subset=[[], [], []]
 	subset12, subset[0] = split(examples, 1/3)
 	subset[1], subset[2]=split(subset12, 1/2)
 
-	# Repeat constructing the tree and perform reduced error pruning 
-	# using different selections of training and validation subsets.
-	
+	# Repeat constructing the tree and performing reduced error pruning 
+	# using different selections of training and validation subsets
 	for i in range(3):
-		# initializing certain variables
+
+		# initializing global variables
 		root=None
 		training_error=[]
 		test_error=[]
 		validation_error=[]
-
 		validation=subset[i]
 		training=[]
-		# use the remaining two subsets as the training set
+
+		# uses the two remaining subsets as the training set
 		for j in range(3):
 			if(j!=i):
 				training.extend(subset[j])
 
 		origin_examples = list(training)
 
-		# constructing the decision tree
+		# constructs the decision tree
 		id3(training, attributes)
 
 		generate_error_rate()
@@ -447,6 +460,9 @@ def part3():
 		# plots the error rates with reduced error pruning
 		plot(training_error, test_error, validation_error)
 
+"""
+implements part1 of the assignment
+"""
 def part1():
 	global origin_examples
 	global tests
@@ -458,16 +474,22 @@ def part1():
 	data, attributes = import_data()
 	examples, tests = split(data,0.2)
 	origin_examples = list(examples)
+
+	# runs the ID3 algorithm
 	id3(examples, attributes)
 	generate_error_rate()
 
-	# output error rate
+	# outputs error rates
 	print ('[%s]' % ', '.join(map(str, training_error)))
 	print ('[%s]' % ', '.join(map(str, test_error)))
 
-	#plotting error rate
+	# plots error rates
 	plot(training_error, test_error,None)
-	
+
+
+"""
+implements part2 of the assignment
+"""	
 def part2():
 	global origin_examples
 	global tests
@@ -484,20 +506,22 @@ def part2():
 	data, attributes = HRData()
 	examples, tests = split(data, 0.2)
 	origin_examples = list(examples)
+
+	# runs the ID3 algorithm on the HR dataset 
 	id3(examples, attributes)
 	
 	generate_error_rate()
 
-	# output error rate
+	# output error rates
 	print ('[%s]' % ', '.join(map(str, training_error)))
 	print ('[%s]' % ', '.join(map(str, test_error)))
 
-	# plotting error rate
+	# plot error rates
 	plot(training_error, test_error, None)
 
 def main(argv):
-	#part1()
-	#part2()
+	part1()
+	part2()
 	part3()
 
 if __name__ == "__main__":
